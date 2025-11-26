@@ -3,11 +3,11 @@ import { writable } from 'svelte/store';
 import { DateTime } from 'luxon';
 
 export interface Meeting {
-  id: string;
-  title: string;
-  start: DateTime;
-  end: DateTime;
-  mood?: 'high' | 'low'; // stored in store
+	id: string;
+	title: string;
+	start: DateTime;
+	end: DateTime;
+	mood?: 'high' | 'low'; // stored in store
 }
 
 export const meetingsStore = writable<Meeting[]>([]);
