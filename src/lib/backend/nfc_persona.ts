@@ -10,7 +10,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
  */
 export async function fetchPersona(
 	nfcId: string
-): Promise<{ nfc_id: string; persona: Json } | null> {
+): Promise<{ usr_id: string; persona: Json } | null> {
 	if (!nfcId) throw new Error('NFC ID is required');
 
 	const res = await fetch(`${BACKEND_URL}/persona/${encodeURIComponent(nfcId)}`);
@@ -22,10 +22,10 @@ export async function fetchPersona(
 	const profile = await res.json();
 
 	// Ensure valid shape
-	if (!profile?.nfc_id || !profile?.persona) return null;
+	if (!profile?.usr_id || !profile?.persona) return null;
 
 	return {
-		nfc_id: profile.nfc_id,
+		usr_id: profile.usr_id,
 		persona: profile.persona
 	};
 }
@@ -37,7 +37,7 @@ export async function fetchPersona(
 export async function registerPersona(
 	nfcId: string,
 	persona: Json
-): Promise<{ nfc_id: string; persona: Json }> {
+): Promise<{ usr_id: string; persona: Json }> {
 	if (!nfcId) throw new Error('NFC ID is required');
 	if (!persona) throw new Error('Persona JSON is required');
 
@@ -55,7 +55,7 @@ export async function registerPersona(
 	if (!res.ok) throw new Error(`Backend responded with ${res.status}`);
 
 	return {
-		nfc_id: nfcId,
+		usr_id: nfcId,
 		persona
 	};
 }

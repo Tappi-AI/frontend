@@ -12,11 +12,17 @@ const backendUrls = {
 	production: 'https://wellbeing.posetmage.com'
 } as const;
 
+const frontendUrls = {
+	development: 'http://localhost:3000',
+	production: 'https://wellbeing.posetmage.com'
+} as const;
+
 type BackendUrlMode = keyof typeof backendUrls;
 
 export default defineConfig(({ mode }) => {
 	const safeMode = mode as BackendUrlMode;
 	const backendUrl = backendUrls[safeMode] || backendUrls.production;
+	const frontendUrl = frontendUrls[safeMode] || frontendUrls.production;
 
 	const isProduction = mode === 'production';
 
@@ -39,7 +45,12 @@ export default defineConfig(({ mode }) => {
 			allowedHosts
 		},
 		define: {
-			'import.meta.env.VITE_BACKEND_URL': JSON.stringify(backendUrl)
+			'import.meta.env.VITE_BACKEND_URL': JSON.stringify(backendUrl),
+
+			// Authentik OAuth
+			'import.meta.env.VITE_AUTHENTIK_URL': JSON.stringify('https://authentik.posetmage.com'),
+			'import.meta.env.VITE_AUTHENTIK_CLIENT_ID': JSON.stringify('ELJJIFFScptTFVpD01DdOPAWHEJTb7zSxbMCzE7s'),
+			'import.meta.env.VITE_AUTHENTIK_REDIRECT_URI': JSON.stringify(`${frontendUrl}/callback/authentik`),
 		},
 		test: {
 			workspace: [
