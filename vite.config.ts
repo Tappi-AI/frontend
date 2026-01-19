@@ -48,8 +48,8 @@ export default defineConfig(({ mode }) => {
 			'import.meta.env.VITE_BACKEND_URL': JSON.stringify(backendUrl),
 
 			// Authentik OAuth
-			'import.meta.env.VITE_AUTHENTIK_URL': JSON.stringify('https://authentik.posetmage.com'),
-			'import.meta.env.VITE_AUTHENTIK_CLIENT_ID': JSON.stringify('ELJJIFFScptTFVpD01DdOPAWHEJTb7zSxbMCzE7s'),
+			'import.meta.env.VITE_AUTHENTIK_URL': JSON.stringify(process.env.AUTHENTIK_URL),
+			'import.meta.env.VITE_AUTHENTIK_CLIENT_ID': JSON.stringify(process.env.AUTHENTIK_CLIENT_ID),
 			'import.meta.env.VITE_AUTHENTIK_REDIRECT_URI': JSON.stringify(`${frontendUrl}/callback/authentik`),
 		},
 		test: {
