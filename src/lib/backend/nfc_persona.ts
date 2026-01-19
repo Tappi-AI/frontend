@@ -1,6 +1,6 @@
 // src/lib/backend/nfc_persona.ts
 
-import type { Json } from '../types/json';
+import type { Json } from '$lib/types/json';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
