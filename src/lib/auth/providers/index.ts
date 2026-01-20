@@ -1,8 +1,9 @@
 // lib/auth/providers/index.ts
 
 import { authentikProvider } from './authentik';
-// later: googleProvider, microsoftProvider
+import { googleProvider } from './google';
 
 export const providers = {
-	authentik: authentikProvider
+	authentik: authentikProvider,
+	google: googleProvider
 };

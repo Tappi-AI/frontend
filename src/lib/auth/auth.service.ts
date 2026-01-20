@@ -42,6 +42,37 @@ export async function handleOAuthCallback(
 		throw new Error('Invalid OAuth state');
 	}
 
+	// Google requires client secret, so we exchange via backend
+	if (providerName === 'google') {
+		const backendUrl = import.meta.env.VITE_BACKEND_URL;
+		const response = await fetch(`${backendUrl}/api/login/google/token`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				code,
+				redirect_uri: provider.redirectUri,
+				code_verifier: verifier
+			})
+		});
+
+		if (!response.ok) {
+			const error = await response.text();
+			throw new Error(error);
+		}
+
+		const data = await response.json();
+
+		return {
+			provider: providerName,
+			accessToken: data.access_token,
+			refreshToken: data.refresh_token,
+			idToken: data.id_token,
+			expiresAt: data.expires_in ? Math.floor(Date.now() / 1000) + data.expires_in : undefined,
+			userInfo: data.userinfo
+		};
+	}
+
+	// Authentik and others use direct token exchange (public client)
 	const tokens = await exchangeCodeForToken(provider.tokenUrl, {
 		grant_type: 'authorization_code',
 		code,

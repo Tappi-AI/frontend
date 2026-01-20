@@ -51,6 +51,10 @@ export default defineConfig(({ mode }) => {
 			'import.meta.env.VITE_AUTHENTIK_URL': JSON.stringify(process.env.AUTHENTIK_URL),
 			'import.meta.env.VITE_AUTHENTIK_CLIENT_ID': JSON.stringify(process.env.AUTHENTIK_CLIENT_ID),
 			'import.meta.env.VITE_AUTHENTIK_REDIRECT_URI': JSON.stringify(`${frontendUrl}/callback/authentik`),
+
+			// Google OAuth
+			'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(process.env.GOOGLE_CLIENT_ID),
+			'import.meta.env.VITE_GOOGLE_REDIRECT_URI': JSON.stringify(`${frontendUrl}/callback/google`),
 		},
 		test: {
 			workspace: [
