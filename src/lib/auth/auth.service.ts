@@ -25,6 +25,17 @@ export async function startLogin(providerName: AuthProvider) {
 		code_challenge_method: 'S256'
 	});
 
+	// Google-specific: request offline access for refresh tokens
+	if (providerName === 'google') {
+		params.set('access_type', 'offline');
+		params.set('prompt', 'consent');
+	}
+
+	console.log(`[OAuth] Starting ${providerName} login`, {
+		clientId: provider.clientId ? '✓' : '✗ MISSING',
+		redirectUri: provider.redirectUri
+	});
+
 	window.location.href = `${provider.authorizeUrl}?${params.toString()}`;
 }
 
@@ -42,44 +53,24 @@ export async function handleOAuthCallback(
 		throw new Error('Invalid OAuth state');
 	}
 
-	// Google requires client secret, so we exchange via backend
-	if (providerName === 'google') {
-		const backendUrl = import.meta.env.VITE_BACKEND_URL;
-		const response = await fetch(`${backendUrl}/api/login/google/token`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				code,
-				redirect_uri: provider.redirectUri,
-				code_verifier: verifier
-			})
-		});
-
-		if (!response.ok) {
-			const error = await response.text();
-			throw new Error(error);
-		}
-
-		const data = await response.json();
-
-		return {
-			provider: providerName,
-			accessToken: data.access_token,
-			refreshToken: data.refresh_token,
-			idToken: data.id_token,
-			expiresAt: data.expires_in ? Math.floor(Date.now() / 1000) + data.expires_in : undefined,
-			userInfo: data.userinfo
-		};
-	}
-
-	// Authentik and others use direct token exchange (public client)
-	const tokens = await exchangeCodeForToken(provider.tokenUrl, {
+	// Build token exchange params
+	const tokenParams: Record<string, string> = {
 		grant_type: 'authorization_code',
 		code,
 		redirect_uri: provider.redirectUri,
 		client_id: provider.clientId,
 		code_verifier: verifier
-	});
+	};
+
+	// Google requires client_secret (not a public client)
+	if (providerName === 'google') {
+		const clientSecret = import.meta.env.VITE_GOOGLE_CLIENT_SECRET;
+		if (clientSecret) {
+			tokenParams.client_secret = clientSecret;
+		}
+	}
+
+	const tokens = await exchangeCodeForToken(provider.tokenUrl, tokenParams);
 
 	const userInfo = await fetchUserInfo(provider.userInfoUrl, tokens.access_token);
 
