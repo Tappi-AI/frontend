@@ -47,6 +47,13 @@ export default defineConfig(({ mode }) => {
 				]
 			}
 		},
+		ssr: {
+			noExternal: [],
+			external: [
+				'@capacitor/core',
+				'@capacitor-community/speech-recognition'
+			]
+		},
 		server: {
 			host: '0.0.0.0',
 			port: 3000,

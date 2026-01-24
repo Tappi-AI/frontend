@@ -6,15 +6,20 @@
 	const isMobile = import.meta.env.VITE_PLATFORM === 'mobile';
 	let SpeechRecognition: any = null;
 
+	// Dynamic import helper to prevent Vite from analyzing the import at build time
+	async function loadCapacitorModule(name: string) {
+		return await import(/* @vite-ignore */ name);
+	}
+
 	onMount(async () => {
 		if (!$authStore) {
 			goto('/login');
 		}
 		// Dynamic import for mobile platforms only
 		if (isMobile) {
-			const { Capacitor } = await import('@capacitor/core');
+			const { Capacitor } = await loadCapacitorModule('@capacitor/core');
 			if (Capacitor.isNativePlatform()) {
-				const mod = await import('@capacitor-community/speech-recognition');
+				const mod = await loadCapacitorModule('@capacitor-community/speech-recognition');
 				SpeechRecognition = mod.SpeechRecognition;
 			}
 		}
