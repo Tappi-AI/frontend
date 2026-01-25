@@ -1,9 +1,13 @@
+<!--routes/+page.svelte-->
+
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { authStore } from '$lib/stores/auth.store';
+	import { loadJson, saveJson } from '$lib/backend/storage';
 
 	const isMobile = import.meta.env.VITE_PLATFORM === 'mobile';
+	const ENTRIES_FILE = 'entries.json';
 	let SpeechRecognition: any = null;
 
 	// Dynamic import helper to prevent Vite from analyzing the import at build time
@@ -14,7 +18,15 @@
 	onMount(async () => {
 		if (!$authStore?.role) {
 			goto('/login');
+			return;
 		}
+
+		// Load entries from storage
+		const storedEntries = await loadJson<Entry[]>(ENTRIES_FILE);
+		if (storedEntries) {
+			entries = storedEntries;
+		}
+
 		// Dynamic import for mobile platforms only
 		if (isMobile) {
 			const { Capacitor } = await loadCapacitorModule('@capacitor/core');
@@ -36,7 +48,7 @@
 	}
 	interface Entry {
 		activity: string;
-		timestamp: Date;
+		timestamp: string; // ISO string for JSON serialization
 		duration?: Duration;
 		emotion?: Emotion;
 		energy: number;
@@ -183,7 +195,7 @@
 
 	function submitActivity() {
 		if (!activity.trim()) return;
-		currentEntry = { activity: activity.trim(), timestamp: new Date(), energy: 3 };
+		currentEntry = { activity: activity.trim(), timestamp: new Date().toISOString(), energy: 3 };
 		activity = '';
 		screen = 'duration';
 	}
@@ -199,8 +211,11 @@
 		screen = 'energy';
 	}
 
-	function save() {
-		if (currentEntry) entries = [{ ...currentEntry, energy }, ...entries];
+	async function save() {
+		if (currentEntry) {
+			entries = [{ ...currentEntry, energy }, ...entries];
+			await saveJson(ENTRIES_FILE, entries);
+		}
 		currentEntry = null;
 		screen = 'main';
 	}
@@ -282,7 +297,7 @@
 								<div class="min-w-0 flex-1">
 									<p class="truncate font-medium text-gray-800">{entry.activity}</p>
 									<p class="text-sm text-gray-500">
-										{entry.timestamp.toLocaleTimeString('en-US', {
+										{new Date(entry.timestamp).toLocaleTimeString('en-US', {
 											hour: 'numeric',
 											minute: '2-digit'
 										})} • {entry.duration?.label}

@@ -9,8 +9,10 @@
 	};
 
 	const getRoleBadge = (role: string | undefined) => {
-		if (role === 'admin') return { class: 'bg-red-100 text-red-800 border-red-200', label: 'Admin' };
-		if (role === 'user') return { class: 'bg-green-100 text-green-800 border-green-200', label: 'User' };
+		if (role === 'admin')
+			return { class: 'bg-red-100 text-red-800 border-red-200', label: 'Admin' };
+		if (role === 'user')
+			return { class: 'bg-green-100 text-green-800 border-green-200', label: 'User' };
 		return { class: 'bg-gray-100 text-gray-800 border-gray-200', label: 'Unregistered' };
 	};
 
@@ -40,9 +42,7 @@
 			<div class="mb-8 flex items-center justify-between">
 				<div class="flex items-center gap-4">
 					<h1 class="text-3xl font-bold text-gray-900">Debug Info</h1>
-					<span
-						class={`rounded-full border px-3 py-1 text-sm font-semibold ${roleBadge.class}`}
-					>
+					<span class={`rounded-full border px-3 py-1 text-sm font-semibold ${roleBadge.class}`}>
 						{roleBadge.label}
 					</span>
 					{#if $authStore?.provider}

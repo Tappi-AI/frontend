@@ -147,7 +147,9 @@
 								</p>
 								<p class="truncate text-xs text-gray-500">
 									{$authStore.provider}
-									<span class={`ml-1 rounded px-1 text-xs ${$authStore.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+									<span
+										class={`ml-1 rounded px-1 text-xs ${$authStore.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
+									>
 										{$authStore.role}
 									</span>
 								</p>
