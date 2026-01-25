@@ -5,6 +5,41 @@ import { generateRandomString, generateCodeChallenge } from './pkce';
 import { exchangeCodeForToken, fetchUserInfo } from './oauth';
 import type { AuthProvider, LoginInfo } from '$lib/types/auth';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+interface BackendUserInfo {
+	sub: string | null;
+	email: string;
+	username: string | null;
+	picture: string | null;
+	provider: 'google' | 'authentik';
+	role?: string;
+}
+
+/**
+ * Verify user with backend. Returns role only if 'user', otherwise empty.
+ */
+export async function verifyWithBackend(accessToken: string): Promise<BackendUserInfo | null> {
+	const response = await fetch(`${BACKEND_URL}/api/login/me`, {
+		headers: {
+			Authorization: `Bearer ${accessToken}`
+		}
+	});
+
+	if (!response.ok) {
+		return null;
+	}
+
+	const data: BackendUserInfo = await response.json();
+
+	// Only 'user' role can use the app
+	if (data.role !== 'user') {
+		data.role = undefined;
+	}
+
+	return data;
+}
+
 export async function startLogin(providerName: AuthProvider) {
 	const provider = providers[providerName];
 
@@ -74,12 +109,16 @@ export async function handleOAuthCallback(
 
 	const userInfo = await fetchUserInfo(provider.userInfoUrl, tokens.access_token);
 
+	// Verify user with backend - role will be empty if not 'user'
+	const backendUser = await verifyWithBackend(tokens.access_token);
+
 	return {
 		provider: providerName,
 		accessToken: tokens.access_token,
 		refreshToken: tokens.refresh_token,
 		idToken: tokens.id_token,
 		expiresAt: tokens.expires_in ? Math.floor(Date.now() / 1000) + tokens.expires_in : undefined,
-		userInfo
+		userInfo,
+		role: backendUser?.role
 	};
 }

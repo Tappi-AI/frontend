@@ -34,20 +34,22 @@
 	});
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-	<div class="w-full max-w-md rounded-lg bg-white p-8 text-center shadow-lg">
+<div
+	class="flex min-h-screen items-center justify-center bg-linear-to-br from-violet-500 via-purple-500 to-fuchsia-500 p-4"
+>
+	<div class="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-2xl">
 		{#if loading}
 			<div
-				class="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-4 border-blue-600"
+				class="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-4 border-purple-600"
 			></div>
-			<h2 class="text-xl font-semibold">Signing you in…</h2>
-			<p class="mt-2 text-gray-600">Please wait</p>
+			<h2 class="text-xl font-semibold text-gray-800">Signing you in…</h2>
+			<p class="mt-2 text-gray-600">Please wait while we verify your account</p>
 		{:else if error}
 			<div class="mb-4 text-lg font-semibold text-red-600">Authentication Failed</div>
 			<p class="mb-6 text-gray-700">{error}</p>
 			<button
-				on:click={() => goto('/login')}
-				class="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+				onclick={() => goto('/login')}
+				class="rounded-2xl bg-linear-to-r from-violet-500 to-fuchsia-500 px-6 py-3 font-semibold text-white transition hover:shadow-lg"
 			>
 				Back to Login
 			</button>

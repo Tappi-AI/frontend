@@ -12,7 +12,7 @@
 	}
 
 	onMount(async () => {
-		if (!$authStore) {
+		if (!$authStore?.role) {
 			goto('/login');
 		}
 		// Dynamic import for mobile platforms only

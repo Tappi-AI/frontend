@@ -92,7 +92,7 @@
 					Debug
 				</button>
 
-				{#if $authStore}
+				{#if $authStore?.role}
 					<button
 						onclick={() => navigate('/chat')}
 						class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left text-gray-700 transition hover:bg-gray-100"
@@ -127,7 +127,7 @@
 
 			<!-- Bottom Section -->
 			<div class="border-t border-gray-200 p-4">
-				{#if $authStore}
+				{#if $authStore?.role}
 					{#if $authStore.userInfo}
 						<div class="mb-3 flex items-center gap-3 px-2">
 							{#if $authStore.userInfo.picture}
@@ -145,7 +145,12 @@
 								<p class="truncate text-sm font-medium text-gray-900">
 									{$authStore.userInfo.name || $authStore.userInfo.email || 'User'}
 								</p>
-								<p class="truncate text-xs text-gray-500">{$authStore.provider}</p>
+								<p class="truncate text-xs text-gray-500">
+									{$authStore.provider}
+									<span class={`ml-1 rounded px-1 text-xs ${$authStore.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+										{$authStore.role}
+									</span>
+								</p>
 							</div>
 						</div>
 					{/if}

@@ -17,6 +17,7 @@ export interface LoginInfo {
 	idToken?: string;
 	expiresAt?: number;
 	userInfo?: UserInfo;
+	role?: string;
 }
 
 export interface OAuthTokens {
